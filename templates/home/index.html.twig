@@ -1,11 +1,21 @@
 {% extends "base.html.twig" %}
 {% block title %} {{title}} {% endblock %}
 {% block body %}
-<h1> {{ message }} </h1>
+    <h1> {{ message }} </h1>
 
-{% endblock %}
-{% block footer %}
-    <div class="container">
-        <h3>Footer</h3>
+    <div class="row">
+        {% for gite in gites %}
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ gite.nom }}</h5>
+                        <p class="card-text">{{ gite.description }}</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
+
 {% endblock %}
