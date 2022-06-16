@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\GiteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GiteRepository::class)
@@ -15,32 +18,64 @@ class Gite
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private int $id;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *  min = 3,
+     *  max = 50
+     * )
      */
-    private string $nom;
+    private $nom;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\length(
+     *  min=10,
+     *  max=255
+     * )
      */
-    private string $description;
+    private $description;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(
+     *  min=30,
+     *  max=300
+     * )
      */
-    private int $surface;
+    private $surface;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull
      */
-    private int $chambre;
+    private $chambre;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull
      */
-    private int $couchage;
+    private $couchage;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Equipement::class, inversedBy="gites")
+     * @Assert\length(
+     *  min=3,
+     * )
+     */
+    private $equipements;
+
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     */
+    private $proprietaire;
+
+    public function __construct()
+    {
+        $this->equipements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +138,42 @@ class Gite
     public function setCouchage(int $couchage): self
     {
         $this->couchage = $couchage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipement>
+     */
+    public function getEquipements(): Collection
+    {
+        return $this->equipements;
+    }
+
+    public function addEquipement(Equipement $equipement): self
+    {
+        if (!$this->equipements->contains($equipement)) {
+            $this->equipements[] = $equipement;
+        }
+
+        return $this;
+    }
+
+    public function removeEquipement(Equipement $equipement): self
+    {
+        $this->equipements->removeElement($equipement);
+
+        return $this;
+    }
+
+    public function getProprietaire(): ?User
+    {
+        return $this->proprietaire;
+    }
+
+    public function setProprietaire(?User $proprietaire): self
+    {
+        $this->proprietaire = $proprietaire;
 
         return $this;
     }

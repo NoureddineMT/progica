@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Gite;
+use App\Entity\GiteSearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,41 @@ class GiteRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Gite[] Returns an array of Gite objects
+     */
+    public function findGiteSearch(GiteSearch $search)
+    {
+        $query = $this->createQueryBuilder('g');
+
+     //Select * from Gite g where g.surface >= surface order by g.id ASC;
+        if($search->getMinSurface()){
+            $query = $query
+                ->andWhere("g.surface >= :minSurface")
+                ->setParameter('minSurface', $search->getMinSurface());
+        }
+
+     //Select * from Gite g where g.surface >= surface and g.chamber >= chamber order by g.id ASC;
+        if($search->getMinChambre()){
+            $query = $query
+                ->andWhere("g.chambre >= :minChambre")
+                ->setParameter('minChambre', $search->getMinChambre());
+        }
+        
+     //Select * from Gite g where g.couchage >= couchage order by g.id ASC;
+        if($search->getMinCouchage()){
+            $query = $query
+                ->andWhere("g.couchage >= :minCouchage")
+                ->setParameter('minCouchage', $search->getMinCouchage());
+        }
+        $query = $query
+            ->orderBy("g.id", "ASC")
+            ->getQuery()
+            ->getResult();
+        return $query;
+     //Select * from Gite g order by g.id ASC;
     }
 
 //    /**

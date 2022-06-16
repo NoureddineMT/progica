@@ -35,7 +35,7 @@ class AdminController extends AbstractController{
         $form = $this->createForm(GiteType::class, $gite);
         $form->handleRequest($request);
 
-        if ($form->isValid() && $form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             
             $em = $doctrine->getManager();
             $em->persist($gite);
